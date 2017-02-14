@@ -4,7 +4,10 @@ import numpy as np
 td = pd.read_csv('train.csv')
 
 #set of class columns for one hot coding
-class_columns = set(['Survived', 'Pclass', 'Sex', 'Cabin', 'Embarked'])
+class_columns = set(['Pclass', 'Sex', 'Cabin', 'Embarked'])
+
+#output columns
+output_columns = set(['Survived'])
 
 exclude_columns = set(['PassengerId', 'Name', 'Ticket'])
 
@@ -13,7 +16,7 @@ one_hot_dicts = {}
 #make one hot label dictionaries for class columns
 for cls in class_columns:
     one_hot_dicts[cls] = {}
-    i = 0 
+    i = 0
     unique_vals = td[cls].unique()
     for val in unique_vals:
         one_hot_vals = [0]*len(unique_vals)
@@ -24,6 +27,7 @@ for cls in class_columns:
 num_data = td.shape[0]
 
 one_hot_data_list = []
+output_list = []
 
 for i in range(num_data):
     this_data_list = []
@@ -32,12 +36,21 @@ for i in range(num_data):
         if ind in exclude_columns:
             continue
         val = row[ind]
+        if ind in output_columns:
+            output_list.append(val)
+            continue
         if ind in class_columns:
-            this_data_list.append(one_hot_dicts[ind][val])
+            this_data_list += one_hot_dicts[ind][val]
         else:
             if pd.isnull(val):
                 val = 0
-            this_data_list.append(val)
+            this_data_list += [val]
     one_hot_data_list.append(this_data_list)
 
+# make dataset
+# calculate dimensions of input, output data
 
+input_data = np.array(one_hot_data_list)
+#print(np.max(input_data))
+output_data = np.array(output_list)
+#print(output_data)

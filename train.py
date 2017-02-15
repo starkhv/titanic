@@ -1,5 +1,7 @@
 import pandas as pd
 import numpy as np
+from keras.models import Sequential
+from keras.layers import Dense, Dropout
 
 td = pd.read_csv('train.csv')
 
@@ -54,3 +56,10 @@ input_data = np.array(one_hot_data_list)
 #print(np.max(input_data))
 output_data = np.array(output_list)
 #print(output_data)
+
+model = Sequential()
+model.add(Dense(30, input_dim=input_data.shape[1], activation='sigmoid'))
+model.add(Dropout(0.5))
+model.add(Dense(1, activation='sigmoid'))
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['binary_accuracy'])
+model.fit(input_data, output_data, 32, 1000, verbose=2, validation_split=0.2)
